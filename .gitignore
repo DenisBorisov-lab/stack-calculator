@@ -1,5 +1,6 @@
 ### C++ template
 # Compiled Object files
+./.idea
 *.slo
 *.lo
 *.o
