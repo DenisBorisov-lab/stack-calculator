@@ -1,10 +1,6 @@
-C:\Users\maibo\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\241.14494.288\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/maibo/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/241.14494.288/bin/ninja/win/x64/ninja.exe -G Ninja -S C:\Users\maibo\CLionProjects\stack-calculator -B C:\Users\maibo\CLionProjects\stack-calculator\cmake-build-debug
--- The C compiler identification is GNU 13.1.0
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: C:/Users/maibo/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/241.14494.288/bin/mingw/bin/gcc.exe - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Configuring done (2.2s)
--- Generating done (0.0s)
--- Build files have been written to: C:/Users/maibo/CLionProjects/stack-calculator/cmake-build-debug
+"/Users/denisborisov/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9559.58/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /Users/denisborisov/CLionProjects/stack-calculator -B /Users/denisborisov/CLionProjects/stack-calculator/cmake-build-debug
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  CMake 3.28 or higher is required.  You are running version 3.26.4
+
+
+-- Configuring incomplete, errors occurred!

@@ -61,6 +61,10 @@ double calculate(char operation, double a, double b) {
         case '*':
             return a * b;
         case '/':
+            if (b == 0){
+                printf("Division by zero!");
+                exit(1);
+            }
             return a / b;
         case '^':
             return pow(a, b);
@@ -76,8 +80,12 @@ double evaluateExpression(char *input) {
     int index = 0;
     bool isNumberExists = false;
     bool isAfterOperator = false;
-    Stack stack1;
-    initStack(&stack1);
+    Stack* stack1 = (Stack *) malloc(sizeof(Stack));
+    if(stack1 == NULL){
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    initStack(stack1);
     while (*pointer != '\0') {
         if (isdigit(*pointer)) {
             if (isAfterOperator && postfix[index - 1] != ' ') {
@@ -94,53 +102,53 @@ double evaluateExpression(char *input) {
                 StackValue value;
                 value.weight = 1;
                 value.value = *pointer;
-                if (!isEmpty(&stack1)) {
+                if (!isEmpty(stack1)) {
                     //Проверяем можно ли положить оператор в стек
-                    if (get(&stack1).weight >= value.weight) {
+                    if (get(stack1).weight >= value.weight) {
                         //пока в стеке есть элемент больше либо равный по весу текущему, достаем и кладем в постфиксную запись
-                        while (!isEmpty(&stack1) && get(&stack1).weight >= value.weight && get(&stack1).value != '(') {
-                            StackValue operator = pop(&stack1);
+                        while (!isEmpty(stack1) && get(stack1).weight >= value.weight && get(stack1).value != '(') {
+                            StackValue operator = pop(stack1);
                             postfix[index++] = operator.value;
                             postfix[index++] = ' ';
 
                         }
                     }
                 }
-                push(&stack1, &value);
+                push(stack1, &value);
             } else if (*pointer == '*' || *pointer == '/') {
                 StackValue value;
                 value.weight = 2;
                 value.value = *pointer;
-                if (!isEmpty(&stack1)) {
+                if (!isEmpty(stack1)) {
                     //Проверяем можно ли положить оператор в стек
-                    if (get(&stack1).weight >= value.weight) {
+                    if (get(stack1).weight >= value.weight) {
                         //пока в стеке есть элемент больше либо равный по весу текущему, достаем и кладем в постфиксную запись
-                        while (!isEmpty(&stack1) && get(&stack1).weight >= value.weight && get(&stack1).value != '(') {
-                            StackValue operator = pop(&stack1);
+                        while (!isEmpty(stack1) && get(stack1).weight >= value.weight && get(stack1).value != '(') {
+                            StackValue operator = pop(stack1);
                             postfix[index++] = operator.value;
                             postfix[index++] = ' ';
 
                         }
                     }
                 }
-                push(&stack1, &value);
+                push(stack1, &value);
             } else if (*pointer == '^') {
                 StackValue value;
                 value.weight = 3;
                 value.value = *pointer;
-                push(&stack1, &value);
+                push(stack1, &value);
             } else if (*pointer == '(') {
                 StackValue value;
                 value.value = *pointer;
-                push(&stack1, &value);
+                push(stack1, &value);
             } else {
-                if (!isEmpty(&stack1)) {
-                    while (get(&stack1).value != '(') {
-                        StackValue operator = pop(&stack1);
+                if (!isEmpty(stack1)) {
+                    while (get(stack1).value != '(') {
+                        StackValue operator = pop(stack1);
                         postfix[index++] = ' ';
                         postfix[index++] = operator.value;
                     }
-                    pop(&stack1);
+                    pop(stack1);
                 } else {
                     printf("Extension error!");
                     exit(1);
@@ -164,50 +172,56 @@ double evaluateExpression(char *input) {
     if (postfix[index - 1] != ' ') {
         postfix[index++] = ' ';
     }
-    while (!isEmpty(&stack1)) {
-        postfix[index++] = pop(&stack1).value;
+    while (!isEmpty(stack1)) {
+        postfix[index++] = pop(stack1).value;
         postfix[index++] = ' ';
     }
     postfix[index - 1] = '\0';
     printf("Postfix: %s\n", postfix);
 
 
-    initStack(&stack1);
+    initStack(stack1);
 
     char *ptr = postfix;
     double temp = 0;
+    bool isStarted = false;
 
     while (*ptr != '\0') {
         if (isdigit(*ptr)) {
             temp = temp == 0 ? temp : temp * 10;
             temp += *ptr - '0';
+            isStarted = true;
         } else if (*ptr == '+' || *ptr == '-' || *ptr == '*' || *ptr == '/' || *ptr == '^') {
-            double b = pop(&stack1).dvalue;
-            double a = pop(&stack1).dvalue;
+            double b = pop(stack1).dvalue;
+            double a = pop(stack1).dvalue;
             temp = calculate(*ptr, a, b);
-        } else if (isspace(*ptr)) {
+        } else if (isspace(*ptr) && isStarted) {
             StackValue value;
             value.dvalue = (double) temp;
-            push(&stack1, &value);
+            push(stack1, &value);
             temp = 0;
         } else {
-            printf("Unknown symbol!");
-            exit(1);
+            if(isStarted){
+                printf("Unknown symbol!");
+                exit(1);
+            }
         }
         ptr++;
     }
-    if (!isEmpty(&stack1)) {
+    if (!isEmpty(stack1)) {
         printf("Stack is not empty!");
         exit(1);
     }
+    free(stack1);
     return temp;
 }
 
 int main() {
-    char input[] = " 7 * ";
+    char input[] = "1/0";
 //    char input[] = "7 + 33 + 56";
 //    char input[] = "7^5 + (123  12)";
-//    char input[] = "7^5 + (123 - 12)";
+//    char input[] = "7^5 + (123 -    12)";
+//    char input[] = "(2^3)^2";
 
     double result = evaluateExpression(input);
     printf("Result: %f\n", result);
